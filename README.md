@@ -47,6 +47,4 @@ El repositorio cuenta con un espacio dedicado para la documentación del proyect
 
 Los diagramas y modelos se realizón utilizando la herramienta de "StarUML", puedes descargar el archivo mdj completo [aquí.]()
 
-## Créditos
 
-Este proyecto fue desarrollado por Ricardo Becerra.
