@@ -29,25 +29,61 @@ public final class JFCitaMedica extends javax.swing.JFrame {
     CitaMedica citaMedica;
 
     public JFCitaMedica() throws SQLException {
-        initComponents();
-        inicializarTablaCitas();
-        inicializarTablaMedico();
-        inicializarTablaPaciente();
-        this.setLocationRelativeTo(null);
-        this.setTitle("Cita Médica");
-        this.jCHorario.setEnabled(false);
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        Toolkit im = Toolkit.getDefaultToolkit();
-        setIconImage(im.getImage(getClass().getResource("/ImagenesLogin/ICONOPRINCIPAL.png")));
-        jTableCita.getTableHeader().setFont(new Font("Dialog", 0 , 12));
-        jTablaMedicos.getTableHeader().setFont(new Font("Dialog", 0 , 12));
-        jTablaPaciente.getTableHeader().setFont(new Font("Dialog", 0 , 12));
-        this.getContentPane().setBackground(new Color (245,245,245));
-        this.jBLimpiar.requestFocus();
-    }    
+    initComponents();
+    Medico.getMedicos();
+    Paciente.getPacientes();
+
+    jTablaMedicos.getSelectionModel().addListSelectionListener(e -> {
+        if (!e.getValueIsAdjusting()) {
+            int fila = jTablaMedicos.getSelectedRow();
+            if (fila >= 0) {
+                int codigo = Integer.parseInt(jTablaMedicos.getValueAt(fila, 0).toString());
+                Medico seleccionado = Medico.getPorId(codigo);
+                if (seleccionado != null) {
+                    medico = seleccionado;
+                    jNombreMedico.setText(seleccionado.getNombre() + " " + seleccionado.getApellido());
+                    jEspecialidad.setText(seleccionado.getEspecialidad());
+                    jConsultorio.setText(String.valueOf(seleccionado.getConsultorio()));
+                    jTelefonoM.setText(seleccionado.getNumeroTelefonico());
+                }
+            }
+        }
+    });
+
+    jTablaPaciente.getSelectionModel().addListSelectionListener(e -> {
+        if (!e.getValueIsAdjusting()) {
+            int fila = jTablaPaciente.getSelectedRow();
+            if (fila >= 0) {
+                String codigo = jTablaPaciente.getValueAt(fila, 0).toString();
+                Paciente seleccionado = Paciente.getPorId(codigo);
+                if (seleccionado != null) {
+                    paciente = seleccionado;
+                    jCedula.setText(seleccionado.getIdCedula());
+                    jPaciente.setText(seleccionado.getNombre() + " " + seleccionado.getApellido());
+                    jTelefonoP.setText(seleccionado.getNumeroTelefonico());
+                    jNacimiento.setText(seleccionado.getFechaNacimiento().toString());
+                }
+            }
+        }
+    });
+
+    inicializarTablaCitas();
+    inicializarTablaMedico();
+    inicializarTablaPaciente();
+    this.setLocationRelativeTo(null);
+    this.setTitle("Cita Médica");
+    this.jCHorario.setEnabled(false);
+    Toolkit im = Toolkit.getDefaultToolkit();
+    setIconImage(im.getImage(getClass().getResource("/ImagenesLogin/ICONOPRINCIPAL.png")));
+    jTableCita.getTableHeader().setFont(new Font("Dialog", 0 , 12));
+    jTablaMedicos.getTableHeader().setFont(new Font("Dialog", 0 , 12));
+    jTablaPaciente.getTableHeader().setFont(new Font("Dialog", 0 , 12));
+    this.getContentPane().setBackground(new Color (245,245,245));
+    this.jBLimpiar.requestFocus();
+}
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -73,7 +109,6 @@ public final class JFCitaMedica extends javax.swing.JFrame {
         jTelefonoP = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        jFechaCita = new com.toedter.calendar.JDateChooser();
         jCHorario = new javax.swing.JComboBox<>();
         jHora = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -178,19 +213,6 @@ public final class JFCitaMedica extends javax.swing.JFrame {
         jLabel14.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jLabel14.setText("Hora:");
 
-        jFechaCita.setDateFormatString("yyyy-MM-dd");
-        jFechaCita.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jFechaCita.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jFechaCitaMousePressed(evt);
-            }
-        });
-        jFechaCita.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                jFechaCitaPropertyChange(evt);
-            }
-        });
-
         jCHorario.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jCHorario.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar" }));
         jCHorario.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -242,9 +264,7 @@ public final class JFCitaMedica extends javax.swing.JFrame {
                         .addComponent(jTelefonoP, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel11)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jFechaCita, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34)
+                        .addGap(163, 163, 163)
                         .addComponent(jLabel14)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jCHorario, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -282,9 +302,7 @@ public final class JFCitaMedica extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(19, 19, 19)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jFechaCita, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -743,7 +761,7 @@ public final class JFCitaMedica extends javax.swing.JFrame {
                                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(241, 241, 241)
                                 .addComponent(jBLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 554, Short.MAX_VALUE))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 554, Short.MAX_VALUE))
                         .addGap(53, 53, 53)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jBRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -793,13 +811,13 @@ public final class JFCitaMedica extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>                        
 
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {                                   
         this.setVisible(false);
-    }//GEN-LAST:event_formWindowClosing
+    }                                  
 
-    private void jBActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBActualizarActionPerformed
+    private void jBActualizarActionPerformed(java.awt.event.ActionEvent evt) {                                             
         try {
             resetBuscar();
             this.jTFBuscarPaciente.setText("Cédula");
@@ -824,9 +842,9 @@ public final class JFCitaMedica extends javax.swing.JFrame {
         } catch (DateTimeParseException e){
             mensaje( "Por favor, selecciona una fecha y hora.", JOptionPane.ERROR_MESSAGE);
         }  
-    }//GEN-LAST:event_jBActualizarActionPerformed
+    }                                            
 
-    private void jBBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBBorrarActionPerformed
+    private void jBBorrarActionPerformed(java.awt.event.ActionEvent evt) {                                         
         resetBuscar();
         this.jTFBuscarPaciente.setText("Cédula");
         this.jTFBuscarPaciente.setForeground(Color.GRAY);
@@ -846,15 +864,17 @@ public final class JFCitaMedica extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(null, "Por favor, selecciona una cita médica.", "Mensaje", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_jBBorrarActionPerformed
+    }                                        
 
-    private void jBRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBRegresarActionPerformed
+    private void jBRegresarActionPerformed(java.awt.event.ActionEvent evt) {                                           
         this.setVisible(false);
-    }//GEN-LAST:event_jBRegresarActionPerformed
+    }                                          
 
-    private void jBGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBGuardarActionPerformed
+    private void jBGuardarActionPerformed(java.awt.event.ActionEvent evt) {                                          
         try {
             resetBuscar();
+            
+            
             if (medico != null && paciente != null) {
                 CitaMedica cita = new CitaMedica();
                 cita.setMedico(medico);
@@ -883,23 +903,23 @@ public final class JFCitaMedica extends javax.swing.JFrame {
         } catch (DateTimeParseException e){
             mensaje("Por favor, selecciona una fecha y hora.", JOptionPane.ERROR_MESSAGE);
         }  
-    }//GEN-LAST:event_jBGuardarActionPerformed
+    }                                         
 
-    private void jBLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBLimpiarActionPerformed
+    private void jBLimpiarActionPerformed(java.awt.event.ActionEvent evt) {                                          
         limpiar();
         this.jTablaMedicos.setEnabled(true);
-    }//GEN-LAST:event_jBLimpiarActionPerformed
+    }                                         
 
-    private void jTFBuscarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTFBuscarMousePressed
+    private void jTFBuscarMousePressed(java.awt.event.MouseEvent evt) {                                       
         resetMedico();
         resetPaciente();
         if(this.jTFBuscar.getText().equals("Paciente o Médico")){
             this.jTFBuscar.setText("");
             this.jTFBuscar.setForeground(Color.BLACK);
         }
-    }//GEN-LAST:event_jTFBuscarMousePressed
+    }                                      
 
-    private void jBBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBBuscarActionPerformed
+    private void jBBuscarActionPerformed(java.awt.event.ActionEvent evt) {                                         
         if (!this.jTFBuscar.getText().isEmpty() && !this.jTFBuscar.getText().equals("Paciente o Médico")){
             DefaultTableModel modelo = new DefaultTableModel();
             modelo.addColumn("ID");
@@ -929,9 +949,9 @@ public final class JFCitaMedica extends javax.swing.JFrame {
             
             inicializarTablaCitas();
         }   
-    }//GEN-LAST:event_jBBuscarActionPerformed
+    }                                        
 
-    private void jTableCitaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableCitaMousePressed
+    private void jTableCitaMousePressed(java.awt.event.MouseEvent evt) {                                        
         this.jBGuardar.setEnabled(false);
         this.jTablaMedicos.setEnabled(false);
         this.jTFBuscarPaciente.setText("Cédula");
@@ -954,13 +974,13 @@ public final class JFCitaMedica extends javax.swing.JFrame {
         ((JTextField) this.jFechaCita.getDateEditor().getUiComponent()).setText(citaMedica.getFecha()+"");
         jCHorario.setSelectedIndex(0);
         jHora.setText(citaMedica.getHora()+"");
-    }//GEN-LAST:event_jTableCitaMousePressed
+    }                                       
 
-    private void jTFBuscarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFBuscarKeyTyped
+    private void jTFBuscarKeyTyped(java.awt.event.KeyEvent evt) {                                   
 
-    }//GEN-LAST:event_jTFBuscarKeyTyped
+    }                                  
 
-    private void jTFBuscarMedicoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTFBuscarMedicoMousePressed
+    private void jTFBuscarMedicoMousePressed(java.awt.event.MouseEvent evt) {                                             
         limpiar();
         resetBuscar();
         resetPaciente();
@@ -968,16 +988,16 @@ public final class JFCitaMedica extends javax.swing.JFrame {
             this.jTFBuscarMedico.setText("");
             this.jTFBuscarMedico.setForeground(Color.BLACK);
         } 
-    }//GEN-LAST:event_jTFBuscarMedicoMousePressed
+    }                                            
 
-    private void jTFBuscarPacienteMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTFBuscarPacienteMousePressed
+    private void jTFBuscarPacienteMousePressed(java.awt.event.MouseEvent evt) {                                               
         if(this.jTFBuscarPaciente.getText().equals("Cédula")){
             this.jTFBuscarPaciente.setText("");
             this.jTFBuscarPaciente.setForeground(Color.BLACK);
         }
-    }//GEN-LAST:event_jTFBuscarPacienteMousePressed
+    }                                              
 
-    private void jBBuscarMedicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBBuscarMedicoActionPerformed
+    private void jBBuscarMedicoActionPerformed(java.awt.event.ActionEvent evt) {                                               
         if ( Medico.getPorEspecialidad(this.jTFBuscarMedico.getText())!= null) {
             DefaultTableModel modelo = new DefaultTableModel();
             modelo.addColumn("ID");
@@ -991,9 +1011,9 @@ public final class JFCitaMedica extends javax.swing.JFrame {
             jTablaMedicos.setModel(modelo);
             setSizeMedico();
         }
-    }//GEN-LAST:event_jBBuscarMedicoActionPerformed
+    }                                              
 
-    private void jBBuscarPacienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBBuscarPacienteActionPerformed
+    private void jBBuscarPacienteActionPerformed(java.awt.event.ActionEvent evt) {                                                 
         Paciente pacienteEncontrado = Paciente.getPorId(this.jTFBuscarPaciente.getText());
         if (pacienteEncontrado != null) {
             DefaultTableModel modelo = new DefaultTableModel();
@@ -1010,36 +1030,32 @@ public final class JFCitaMedica extends javax.swing.JFrame {
             inicializarTablaPaciente();
             JOptionPane.showMessageDialog(null, "Paciente no encontrado.");
         }
-    }//GEN-LAST:event_jBBuscarPacienteActionPerformed
+    }                                                
 
-    private void jTFBuscarMedicoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFBuscarMedicoKeyTyped
+    private void jTFBuscarMedicoKeyTyped(java.awt.event.KeyEvent evt) {                                         
         if(this.jTFBuscarMedico.getText().equals("Especialidad")){
             this.jTFBuscarMedico.setText("");
             this.jTFBuscarMedico.setForeground(Color.BLACK);
         } 
-    }//GEN-LAST:event_jTFBuscarMedicoKeyTyped
+    }                                        
 
-    private void jTFBuscarPacienteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFBuscarPacienteKeyTyped
+    private void jTFBuscarPacienteKeyTyped(java.awt.event.KeyEvent evt) {                                           
 
-    }//GEN-LAST:event_jTFBuscarPacienteKeyTyped
+    }                                          
 
-    private void jTablaMedicosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablaMedicosMousePressed
-        try {
-            int Fila = jTablaMedicos.getSelectedRow();
-            int codigo = Integer.parseInt(jTablaMedicos.getValueAt(Fila, 0).toString());
-            medico = Medico.getPorId(codigo);
-            this.jNombreMedico.setText(medico.getNombre()+" "+medico.getApellido());
-            this.jTelefonoM.setText(medico.getNumeroTelefonico());
-            this.jEspecialidad.setText(medico.getEspecialidad());
-            this.jConsultorio.setText(String.valueOf(medico.getConsultorio()));
-            this.jCHorario.setSelectedIndex(0);
-            ((JTextField) this.jFechaCita.getDateEditor().getUiComponent()).setText("");
-        } catch (ArrayIndexOutOfBoundsException e){
-            
-        }
-    }//GEN-LAST:event_jTablaMedicosMousePressed
+    private void jTablaMedicosMousePressed(java.awt.event.MouseEvent evt) {                                           
+        int Fila = jTablaMedicos.getSelectedRow();
+    int codigo = Integer.parseInt(jTablaMedicos.getValueAt(Fila, 0).toString());
+    medico = Medico.getPorId(codigo);
+    this.jNombreMedico.setText(medico.getNombre()+" "+medico.getApellido());
+    this.jTelefonoM.setText(medico.getNumeroTelefonico());
+    this.jEspecialidad.setText(medico.getEspecialidad());
+    this.jConsultorio.setText(String.valueOf(medico.getConsultorio()));
+    this.jCHorario.setSelectedIndex(0);
+    ((JTextField) this.jFechaCita.getDateEditor().getUiComponent()).setText("");
+    }                                          
 
-    private void jTablaPacienteMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTablaPacienteMousePressed
+    private void jTablaPacienteMousePressed(java.awt.event.MouseEvent evt) {                                            
         int Fila = jTablaPaciente.getSelectedRow();
         String codigo = jTablaPaciente.getValueAt(Fila, 0).toString();
         paciente = Paciente.getPorId(codigo);
@@ -1047,9 +1063,9 @@ public final class JFCitaMedica extends javax.swing.JFrame {
         this.jPaciente.setText(paciente.getNombre()+" "+paciente.getApellido());
         this.jTelefonoP.setText(paciente.getNumeroTelefonico());
         this.jNacimiento.setText(paciente.getFechaNacimiento().toString());
-    }//GEN-LAST:event_jTablaPacienteMousePressed
+    }                                           
 
-    private void jCHorarioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCHorarioMouseEntered
+    private void jCHorarioMouseEntered(java.awt.event.MouseEvent evt) {                                       
         String fecha = ((JTextField) this.jFechaCita.getDateEditor().getUiComponent()).getText();
         if (!fecha.isEmpty() && !jNombreMedico.getText().isEmpty() && jCHorario.getSelectedIndex() == 0) {
             actualizarHorario();
@@ -1059,17 +1075,24 @@ public final class JFCitaMedica extends javax.swing.JFrame {
             this.jCHorario.setSelectedIndex(0);
             actualizarHorario();
         }
-    }//GEN-LAST:event_jCHorarioMouseEntered
+    }                                      
 
-    private void jFechaCitaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jFechaCitaMousePressed
+    private void jFechaCitaMousePressed(java.awt.event.MouseEvent evt) {                                        
 
-    }//GEN-LAST:event_jFechaCitaMousePressed
+    }                                       
 
-    private void jFechaCitaPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jFechaCitaPropertyChange
-        this.jCHorario.setSelectedIndex(0);
-    }//GEN-LAST:event_jFechaCitaPropertyChange
+    private void jFechaCitaPropertyChange(java.beans.PropertyChangeEvent evt) {                                          
+ 
+    if ("date".equals(evt.getPropertyName())) {
+        jCHorario.setSelectedIndex(0);
+        if (medico != null && jFechaCita.getDate() != null) {
+            actualizarHorario();
+        }
+    }
 
-    private void jTFBuscarMedicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTFBuscarMedicoActionPerformed
+    }                                         
+
+    private void jTFBuscarMedicoActionPerformed(java.awt.event.ActionEvent evt) {                                                
         if ( Medico.getPorEspecialidad(this.jTFBuscarMedico.getText())!= null) {
             DefaultTableModel modelo = new DefaultTableModel();
             modelo.addColumn("ID");
@@ -1083,9 +1106,9 @@ public final class JFCitaMedica extends javax.swing.JFrame {
             jTablaMedicos.setModel(modelo);
             setSizeMedico();
         }
-    }//GEN-LAST:event_jTFBuscarMedicoActionPerformed
+    }                                               
 
-    private void jTFBuscarPacienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTFBuscarPacienteActionPerformed
+    private void jTFBuscarPacienteActionPerformed(java.awt.event.ActionEvent evt) {                                                  
         Paciente pacienteEncontrado = Paciente.getPorId(this.jTFBuscarPaciente.getText());
         if (pacienteEncontrado != null) {
             DefaultTableModel modelo = new DefaultTableModel();
@@ -1102,9 +1125,9 @@ public final class JFCitaMedica extends javax.swing.JFrame {
             inicializarTablaPaciente();
             JOptionPane.showMessageDialog(null, "Paciente no encontrado.");
         }
-    }//GEN-LAST:event_jTFBuscarPacienteActionPerformed
+    }                                                 
 
-    private void jTFBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTFBuscarActionPerformed
+    private void jTFBuscarActionPerformed(java.awt.event.ActionEvent evt) {                                          
         if (!this.jTFBuscar.getText().isEmpty() && !this.jTFBuscar.getText().equals("Paciente o Médico")){
             DefaultTableModel modelo = new DefaultTableModel();
             modelo.addColumn("ID");
@@ -1134,19 +1157,27 @@ public final class JFCitaMedica extends javax.swing.JFrame {
             
             inicializarTablaCitas();
         }   
-    }//GEN-LAST:event_jTFBuscarActionPerformed
-    
-    public void actualizarHorario(){
-        this.jCHorario.setEnabled(true);
-        this.jCHorario.removeAllItems();
-        this.jCHorario.addItem("Seleccionar");
-        LocalDate fecha = LocalDate.parse(((JTextField) this.jFechaCita.getDateEditor().getUiComponent()).getText());
-        for (int i = 0; i < getHorasDisponibles(fecha, medico).size(); i++) {
-            String hora = getHorasDisponibles(fecha, medico).get(i).toString();
-            jCHorario.addItem(hora);
-
-        } 
+    }                                         
+   public void actualizarHorario() {
+    String textoFecha = ((JTextField) jFechaCita.getDateEditor().getUiComponent()).getText();
+    if (medico == null || textoFecha.isBlank()) {
+        jCHorario.setEnabled(false);
+        return;
     }
+
+    jCHorario.setEnabled(true);
+    jCHorario.removeAllItems();
+    jCHorario.addItem("Seleccionar");
+
+    LocalDate fecha = LocalDate.parse(textoFecha);
+    for (LocalTime hora : CitaMedica.getHorasDisponibles(fecha, medico)) {
+        jCHorario.addItem(hora.toString());
+    }
+
+    if (jCHorario.getItemCount() == 1) {
+        jCHorario.setEnabled(false); // no hay horas para ese día
+    }
+}
     
     private void limpiar (){
         inicializarTablaCitas();
@@ -1335,7 +1366,7 @@ public final class JFCitaMedica extends javax.swing.JFrame {
         });
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify                     
     private javax.swing.JButton jBActualizar;
     private javax.swing.JButton jBBorrar;
     private javax.swing.JButton jBBuscar;
@@ -1348,7 +1379,6 @@ public final class JFCitaMedica extends javax.swing.JFrame {
     private javax.swing.JLabel jCedula;
     private javax.swing.JLabel jConsultorio;
     private javax.swing.JLabel jEspecialidad;
-    private com.toedter.calendar.JDateChooser jFechaCita;
     private javax.swing.JLabel jHora;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -1389,5 +1419,5 @@ public final class JFCitaMedica extends javax.swing.JFrame {
     private javax.swing.JLabel jTelefonoM;
     private javax.swing.JLabel jTelefonoP;
     private javax.swing.JTextArea jTextArea1;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration                   
 }
